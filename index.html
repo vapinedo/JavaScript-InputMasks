@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SSN Input Mask</title>
+  </head>
+  <body>
+    <label for="ssn">SSN</label>
+    <input type="text" id="ssn" maxlength="11" />
+    <br /><br />
+
+    <label for="ssn">Tax ID</label>
+    <input type="text" id="taxid" maxlength="10" />
+
+    <script>
+      const ssnInput = document.getElementById("ssn");
+      const taxInput = document.getElementById("taxid");
+      ssnInput.focus();
+
+      ssnInput.addEventListener("input", function (event) {
+        const input = event.target;
+        const inputValue = input.value.replace(/\D/g, ""); // Remove non-numeric characters
+        const formattedValue = formatSSN(inputValue); // Apply formatting
+        let cursorPosition = input.selectionStart; // Get current cursor position
+
+        if (inputValue.length === 4) {
+          cursorPosition += 1;
+        }
+        if (inputValue.length === 6) {
+          cursorPosition += 1;
+        }
+
+        // Update input value with formatted SSN
+        input.value = formattedValue;
+
+        // Adjust cursor position based on formatting
+        const newPosition = calculateCursorPosition(
+          cursorPosition,
+          input.value,
+          formattedValue
+        );
+        input.setSelectionRange(newPosition, newPosition);
+      });
+
+      taxInput.addEventListener("input", function (event) {
+        const input = event.target;
+        const inputValue = input.value.replace(/\D/g, ""); // Remove non-numeric characters
+        const formattedValue = formatTaxid(inputValue); // Apply formatting
+        let cursorPosition = input.selectionStart; // Get current cursor position
+
+        if (inputValue.length === 3) {
+          cursorPosition += 1;
+        }
+
+        // Update input value with formatted SSN
+        input.value = formattedValue;
+
+        // Adjust cursor position based on formatting
+        const newPosition = calculateCursorPosition(
+          cursorPosition,
+          input.value,
+          formattedValue
+        );
+        input.setSelectionRange(newPosition, newPosition);
+      });
+
+      function formatSSN(ssn) {
+        const matched = ssn.match(/^(\d{0,3})(\d{0,2})(\d{0,4})$/);
+        console.log({ matched });
+        if (matched) {
+          let formattedSSN = "";
+          if (matched[1]) formattedSSN += matched[1];
+          if (matched[2]) formattedSSN += "-" + matched[2];
+          if (matched[3]) formattedSSN += "-" + matched[3];
+          return formattedSSN;
+        }
+        return ssn; // Return as is if unexpected format
+      }
+
+      function formatTaxid(taxid) {
+        const matched = taxid.match(/^(\d{0,2})(\d{0,7})$/);
+        if (matched) {
+          let formattedTaxid = "";
+          if (matched[1]) formattedTaxid += matched[1];
+          if (matched[2]) formattedTaxid += "-" + matched[2];
+          return formattedTaxid;
+        }
+        return taxid; // Return as is if unexpected format
+      }
+
+      // Function to calculate adjusted cursor position after formatting
+      function calculateCursorPosition(oldPosition, oldValue, newValue) {
+        let newPosition = oldPosition;
+
+        // Count non-dash characters up to the cursor position in the new value
+        const newValueUntilCursor = newValue
+          .slice(0, newPosition)
+          .replace(/-/g, "");
+        const oldValueUntilCursor = oldValue
+          .slice(0, newPosition)
+          .replace(/-/g, "");
+
+        // Adjust newPosition based on the difference in lengths
+        newPosition += newValueUntilCursor.length - oldValueUntilCursor.length;
+
+        return newPosition;
+      }
+    </script>
+  </body>
+</html>

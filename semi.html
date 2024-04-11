@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SSN Input Mask</title>
+  </head>
+  <body>
+    <label for="ssn">Enter SSN (e.g., 123456789):</label>
+    <input type="text" id="ssn" maxlength="11" />
+
+    <script>
+      // Get reference to the SSN input element
+      const ssnInput = document.getElementById("ssn");
+
+      // Function to apply SSN input mask
+      function applySSNMask(event) {
+        const ssn = event.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+        const formattedSSN = formatSSN(ssn);
+        event.target.value = formattedSSN;
+      }
+
+      // Function to format SSN (e.g., 123456789 => 123-45-6789)
+      function formatSSN(ssn) {
+        const matched = ssn.match(/^(\d{0,3})(\d{0,2})(\d{0,4})$/);
+        if (matched) {
+          let formattedSSN = "";
+          if (matched[1]) formattedSSN += matched[1];
+          if (matched[2]) formattedSSN += "-" + matched[2];
+          if (matched[3]) formattedSSN += "-" + matched[3];
+          return formattedSSN;
+        }
+        return ssn; // Return as is if unexpected format
+      }
+
+      // Add event listener for input
+      ssnInput.addEventListener("input", applySSNMask);
+    </script>
+  </body>
+</html>
